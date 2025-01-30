@@ -1,21 +1,58 @@
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 name: Tests
 
 jobs:
   build:
+    name: test (${{ matrix.os }}, node-${{ matrix.node }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+        node: [18.x, 20.x, 22.x]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: ${{ matrix.config.node }}
       - name: Install root project dependencies
-        run: npm install
+        run: npm ci
       - name: Build and run tests
         run: npm test
+
+  release:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 22.x
+      - name: Install Dependencies
+        run: npm ci
+      - name: Bundle
+        run: npm run bundle
+      - name: Release
+        id: release
+        run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    outputs:
+      release_version: ${{ steps.release.outputs.release_version }}

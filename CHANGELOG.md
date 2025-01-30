@@ -1,3 +1,9 @@
+# 1.0.0 (2025-01-30)
+
+
+### Features
+
+* support streaming response body ([#2](https://github.com/dankeboy36/request-light-stream/issues/2)) ([818bb39](https://github.com/dankeboy36/request-light-stream/commit/818bb39f554ac5d5c1c6fc2e963ce1d976d1fdec))
 
 0.5.0 / 2021-07-12
 ==================

@@ -9,12 +9,21 @@ import { AddressInfo } from 'net';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { PassThrough, Readable } from 'stream';
+import { ReadableStream as PolyfillReadableStream } from 'web-streams-polyfill';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { CancellationTokenSource } from 'vscode-jsonrpc'
 
 function getUrl(server: Server<any, any>, protocol: string = 'http') {
 	const address = server.address() as AddressInfo;
 	return `${protocol}://${address.address}:${address.port}`;
+}
+
+function getReadableStreamFrom(body: ReadableStream): Readable {
+	if (typeof Readable.fromWeb === 'function') {
+		return Readable.fromWeb(body);
+	} else {
+		return Readable.from(PolyfillReadableStream.from(body));
+	}
 }
 
 test('text content', async t => {
@@ -199,7 +208,7 @@ test('stream responseType', async t => {
 
 		configure(undefined, false);
 		const response = await xhr({ url: getUrl(server), responseType: 'stream' });
-		const readable = Readable.fromWeb(response.body)
+		const readable = getReadableStreamFrom(response.body);
 
 		let data = '';
 		readable.on('data', chunk => {
@@ -226,7 +235,7 @@ test('stream responseType (for await)', async t => {
 
 		configure(undefined, false);
 		const response = await xhr({ url: getUrl(server), responseType: 'stream' });
-		const readable = Readable.fromWeb(response.body)
+		const readable = getReadableStreamFrom(response.body);
 
 		let data = '';
 		for await (const chunk of readable) {
@@ -262,7 +271,7 @@ test('stream responseType with redirect', async t => {
 		const url = new URL(getUrl(server));
 		url.pathname = '/foo';
 		const response = await xhr({ url: url.toString(), responseType: 'stream' });
-		const readable = Readable.fromWeb(response.body);
+		const readable = getReadableStreamFrom(response.body);
 
 		let data = '';
 		readable.on('data', chunk => {
@@ -293,7 +302,7 @@ test('stream responseType cancellation closes readable body', async t => {
 		configure(undefined, false);
 		const response = await xhr({ url: getUrl(server), responseType: 'stream', token: cancellationTokenSource.token });
 
-		const readable = Readable.fromWeb(response.body);
+		const readable = getReadableStreamFrom(response.body);
 
 		cancellationTokenSource.cancel();
 

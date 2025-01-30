@@ -6,9 +6,8 @@ import * as http from 'http';
 import * as https from 'https';
 import { format, parse as parseUrl, Url } from 'url';
 import * as l10n from '@vscode/l10n';
-import * as stream from 'stream/web';
 import * as zlib from 'zlib';
-import { ReadableStream as PolyfillReadableStream } from 'web-streams-polyfill';
+import { ReadableStream } from 'web-streams-polyfill';
 
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
@@ -17,14 +16,6 @@ import { StreamXHROptions, StreamXHRResponse, XHRConfigure, XHROptions, XHRRespo
 
 let proxyUrl: string | undefined = undefined;
 let strictSSL: boolean = true;
-
-function getReadableStreamFrom(readable: import('stream').Readable): ReadableStream {
-	if (typeof stream.ReadableStream.from === 'function') {
-		return stream.ReadableStream.from(readable);
-	} else {
-		return PolyfillReadableStream.from(readable);
-	}
-}
 
 export const configure: XHRConfigure = (_proxyUrl: string | undefined, _strictSSL: boolean) => {
 	proxyUrl = _proxyUrl;
@@ -69,7 +60,7 @@ export function xhr(options: XHROptions | StreamXHROptions): Promise<XHRResponse
 		}
 
 		if (isStreamXHROptions(options)) {
-			const body = getReadableStreamFrom(readable);
+			const body = ReadableStream.from(readable)
 			if (options.token) {
 				if (options.token.isCancellationRequested) {
 					readable.destroy(new AbortError());

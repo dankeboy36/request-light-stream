@@ -18,14 +18,6 @@ function getUrl(server: Server<any, any>, protocol: string = 'http') {
 	return `${protocol}://${address.address}:${address.port}`;
 }
 
-function getReadableStreamFrom(body: ReadableStream): Readable {
-	if (typeof Readable.fromWeb === 'function') {
-		return Readable.fromWeb(body);
-	} else {
-		return Readable.from(PolyfillReadableStream.from(body));
-	}
-}
-
 test('text content', async t => {
 	const testContent = JSON.stringify({ hello: 1, world: true })
 
@@ -436,3 +428,7 @@ test('stream responseType in browser with non-ASCII text', async t => {
 		server.close();
 	}
 });
+
+function getReadableStreamFrom(body: ReadableStream): Readable {
+	return Readable.from(PolyfillReadableStream.from(body));
+}

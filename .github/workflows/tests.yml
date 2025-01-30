@@ -11,7 +11,7 @@ name: Tests
 
 jobs:
   build:
-    name: test (${{ matrix.os }}, node-${{ matrix.node }}
+    name: test (${{ matrix.os }}, node-${{ matrix.node }})
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -25,7 +25,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.config.node }}
+          node-version: ${{ matrix.node }}
       - name: Install root project dependencies
         run: npm ci
       - name: Build and run tests

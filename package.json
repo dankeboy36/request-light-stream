@@ -1,6 +1,6 @@
 {
   "name": "request-light-stream",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight request library. Promise based, with proxy support and readable response body. (See https://github.com/microsoft/node-request-light/issues/34)",
   "main": "./lib/node/main.js",
   "browser": {

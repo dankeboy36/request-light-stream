@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/dankeboy36/request-light-stream/compare/1.0.0...1.0.1) (2025-01-31)
+
+
+### Bug Fixes
+
+* remove webstream ponyfills ([#3](https://github.com/dankeboy36/request-light-stream/issues/3)) ([5fbe866](https://github.com/dankeboy36/request-light-stream/commit/5fbe866f1d291871833dc28af8334554a2ca801e))
+
 # 1.0.0 (2025-01-30)
 
 

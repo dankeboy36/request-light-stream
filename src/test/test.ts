@@ -9,7 +9,6 @@ import { AddressInfo } from 'net';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { PassThrough, Readable } from 'stream';
-import { ReadableStream as PolyfillReadableStream } from 'web-streams-polyfill';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { CancellationTokenSource } from 'vscode-jsonrpc'
 
@@ -430,5 +429,19 @@ test('stream responseType in browser with non-ASCII text', async t => {
 });
 
 function getReadableStreamFrom(body: ReadableStream): Readable {
-	return Readable.from(PolyfillReadableStream.from(body));
+	const reader = body.getReader();
+	return new Readable({
+		async read() {
+			try {
+				const { done, value } = await reader.read();
+				if (done) {
+					this.push(null);
+				} else {
+					this.push(Buffer.from(value));
+				}
+			} catch (err) {
+				this.destroy(err);
+			}
+		}
+	});
 }

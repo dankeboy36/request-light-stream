@@ -1,9 +1,9 @@
 # request-light
 
 
-[![npm Package](https://img.shields.io/npm/v/request-light.svg?style=flat-square)](https://www.npmjs.org/package/request-light)
-[![NPM Downloads](https://img.shields.io/npm/dm/request-light.svg)](https://npmjs.org/package/request-light)
-[![Build Status](https://github.com/microsoft/node-request-light/workflows/Tests/badge.svg)](https://github.com/microsoft/node-request-light/workflows/Tests)
+[![npm Package](https://img.shields.io/npm/v/request-light-stream.svg?style=flat-square)](https://www.npmjs.org/package/request-light-stream)
+[![NPM Downloads](https://img.shields.io/npm/dm/request-light-stream.svg)](https://npmjs.org/package/request-light-stream)
+[![Build Status](https://github.com/dankeboy36/request-light-stream/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/dankeboy36/request-light-stream/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight request library intended to be used by VSCode extensions.
@@ -12,7 +12,7 @@ A lightweight request library intended to be used by VSCode extensions.
 - `ReadableStream` response `body` ([microsoft/node-request-light#34](https://github.com/microsoft/node-request-light/issues/34)).
 
 ```ts
-import { xhr, XHRResponse, getErrorStatusDescription } from 'request-light';
+import { xhr, XHRResponse, getErrorStatusDescription } from 'request-light-stream';
 
 const headers = { 'Accept-Encoding': 'gzip, deflate' };
 return xhr({ url: url, followRedirects: 5, headers }).then(response => {
@@ -25,7 +25,7 @@ return xhr({ url: url, followRedirects: 5, headers }).then(response => {
 `node/client.ts`:
 ```ts
 import { Readable } from 'node:stream'
-import { xhr } from 'request-light';
+import { xhr } from 'request-light-stream';
 
 const response = await xhr({ url: url, responseType: 'stream' });
 const readable = Readable.fromWeb(response.body);
@@ -38,6 +38,8 @@ for await (const chunk of readable) {
 
 `browser/client.ts`:
 ```ts
+import { xhr } from 'request-light-stream';
+
 const response = await xhr({ url: url, responseType: 'stream' });
 const reader = response.body.getReader();
 

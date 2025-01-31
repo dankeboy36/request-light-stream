@@ -7,7 +7,6 @@ import * as https from 'https';
 import { format, parse as parseUrl, Url } from 'url';
 import * as l10n from '@vscode/l10n';
 import * as zlib from 'zlib';
-import { ReadableStream } from 'web-streams-polyfill';
 
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
@@ -60,7 +59,16 @@ export function xhr(options: XHROptions | StreamXHROptions): Promise<XHRResponse
 		}
 
 		if (isStreamXHROptions(options)) {
-			const body = ReadableStream.from(readable)
+			const body = new ReadableStream({
+				start(controller) {
+					readable.on('data', chunk => controller.enqueue(chunk));
+					readable.on('end', () => controller.close());
+					readable.on('error', err => controller.error(err));
+				},
+				cancel() {
+					readable.destroy(new AbortError());
+				}
+			});
 			if (options.token) {
 				if (options.token.isCancellationRequested) {
 					readable.destroy(new AbortError());

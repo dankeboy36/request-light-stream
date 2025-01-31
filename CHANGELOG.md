@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/dankeboy36/request-light-stream/compare/1.0.1...1.0.2) (2025-01-31)
+
+
+### Bug Fixes
+
+* **doc:** update readme ([#4](https://github.com/dankeboy36/request-light-stream/issues/4)) ([88a8868](https://github.com/dankeboy36/request-light-stream/commit/88a886843e67b41e744ef19e0d180659d30fc61d))
+
 ## [1.0.1](https://github.com/dankeboy36/request-light-stream/compare/1.0.0...1.0.1) (2025-01-31)
 
 

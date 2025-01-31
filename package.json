@@ -26,8 +26,7 @@
   "dependencies": {
     "@vscode/l10n": "^0.0.18",
     "http-proxy-agent": "^7.0.2",
-    "https-proxy-agent": "^7.0.5",
-    "web-streams-polyfill": "^4.1.0"
+    "https-proxy-agent": "^7.0.5"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",

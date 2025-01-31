@@ -1,4 +1,4 @@
-# request-light
+# request-light-stream
 
 
 [![npm Package](https://img.shields.io/npm/v/request-light-stream.svg?style=flat-square)](https://www.npmjs.org/package/request-light-stream)
@@ -9,7 +9,7 @@
 A lightweight request library intended to be used by VSCode extensions.
 - NodeJS and browser main entry points
 - proxy support: Use `configure` or `HTTP_PROXY` and `HTTPS_PROXY` env variables to configure the HTTP proxy addresses.
-- `ReadableStream` response `body` ([microsoft/node-request-light#34](https://github.com/microsoft/node-request-light/issues/34)).
+- [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) response `body` ([microsoft/node-request-light#34](https://github.com/microsoft/node-request-light/issues/34)).
 
 ```ts
 import { xhr, XHRResponse, getErrorStatusDescription } from 'request-light-stream';
@@ -43,12 +43,13 @@ import { xhr } from 'request-light-stream';
 const response = await xhr({ url: url, responseType: 'stream' });
 const reader = response.body.getReader();
 
-let done: boolean, value: Uint8Array | undefined;
+const decoder = new TextDecoder('utf-8');
 let data = '';
+let done: boolean, value: Uint8Array | undefined;
 while (!done) {
     ({ done, value } = await reader.read());
     if (value) {
-        data += new TextDecoder().decode(value);
+        data += decoder.decode(value, { stream: true });
     }
 }
 ```
